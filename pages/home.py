@@ -58,7 +58,7 @@ BODY = f"""
       <p class="hero__trust">Custom-built. Search-ready at launch. Every lead
       saved. Every review answered.</p>
     </div>
-    <div>
+    <div class="hero__media">
       {browser_frame("yourbusiness.com",
                      "[SCREENSHOT: best live build, warm grade. Replace before launch.]")}
     </div>

@@ -229,3 +229,145 @@
     });
   }
 })();
+
+/* ============================================================
+   BOLD PASS — motion layer
+   Progressive enhancement only: everything checks
+   prefers-reduced-motion and fails silently.
+   ============================================================ */
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Brass scroll progress bar ---------- */
+  if (!reduce) {
+    var bar = document.createElement("div");
+    bar.className = "scroll-progress";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+    var ticking = false;
+    function paint() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - window.innerHeight;
+      bar.style.setProperty("--scroll-progress", max > 0 ? (window.scrollY / max).toFixed(4) : 0);
+      ticking = false;
+    }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { window.requestAnimationFrame(paint); ticking = true; }
+    }, { passive: true });
+    paint();
+  }
+
+  /* ---------- Staggered reveals ---------- */
+  if (!reduce) {
+    var groups = {};
+    document.querySelectorAll(".reveal").forEach(function (el) {
+      var parent = el.parentElement;
+      var key = parent ? Array.prototype.indexOf.call(document.querySelectorAll("*"), parent) : 0;
+      groups[key] = (groups[key] || 0);
+      el.style.setProperty("--stagger", ((groups[key] % 6) * 0.07).toFixed(2) + "s");
+      groups[key]++;
+    });
+  }
+
+  /* ---------- Hero signature: word-by-word rise + drawn underline ---------- */
+  var heroH1 = document.querySelector(".hero h1");
+  if (heroH1 && !reduce && heroH1.children.length === 0) {
+    var words = heroH1.textContent.trim().split(/\s+/);
+    heroH1.textContent = "";
+    words.forEach(function (word, i) {
+      var span = document.createElement("span");
+      span.className = "hero-word";
+      span.style.setProperty("--i", i);
+      span.textContent = word;
+      if (i === words.length - 1) {
+        var accent = document.createElement("span");
+        accent.className = "hero-accent";
+        accent.appendChild(span);
+        accent.insertAdjacentHTML("beforeend",
+          '<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">' +
+          '<path pathLength="120" d="M2 9 C 25 4, 50 11, 72 6 S 95 7, 98 5"/></svg>');
+        heroH1.appendChild(accent);
+      } else {
+        heroH1.appendChild(span);
+        heroH1.appendChild(document.createTextNode(" "));
+      }
+    });
+  }
+
+  /* ---------- Hero mockup: settle into float, tilt toward cursor ---------- */
+  var media = document.querySelector(".hero__media");
+  if (media && !reduce) {
+    var frame = media.querySelector(".browser-frame");
+    if (frame) {
+      frame.addEventListener("animationend", function onIn(e) {
+        if (e.animationName === "frame-in") {
+          media.classList.add("is-settled");
+          frame.removeEventListener("animationend", onIn);
+        }
+      });
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        media.addEventListener("mousemove", function (e) {
+          var r = media.getBoundingClientRect();
+          var x = (e.clientX - r.left) / r.width - 0.5;
+          var y = (e.clientY - r.top) / r.height - 0.5;
+          media.classList.add("is-tilting");
+          media.style.setProperty("--tilt-y", (x * 6).toFixed(2) + "deg");
+          media.style.setProperty("--tilt-x", (y * -6).toFixed(2) + "deg");
+        });
+        media.addEventListener("mouseleave", function () {
+          media.classList.remove("is-tilting");
+        });
+      }
+    }
+  }
+
+  /* ---------- Marquee band ---------- */
+  var bandList = document.querySelector(".divider-band .check-list--inline");
+  if (bandList && !reduce) {
+    var marquee = document.createElement("div");
+    marquee.className = "marquee";
+    var track = document.createElement("div");
+    track.className = "marquee__track";
+    bandList.parentNode.insertBefore(marquee, bandList);
+    track.appendChild(bandList);
+    var clone = bandList.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    track.appendChild(clone);
+    marquee.appendChild(track);
+  }
+
+  /* ---------- Stat count-up ---------- */
+  var stats = document.querySelectorAll(".stat__number");
+  if (stats.length && !reduce && "IntersectionObserver" in window) {
+    var NUM = /\d+(?:\.\d+)?/g;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        io.unobserve(entry.target);
+        var el = entry.target;
+        var template = el.textContent;
+        var targets = (template.match(NUM) || []).map(Number);
+        if (!targets.length) return;
+        var decimals = (template.match(NUM) || []).map(function (t) {
+          return (t.split(".")[1] || "").length;
+        });
+        var start = null, DURATION = 1100;
+        function tick(ts) {
+          if (start === null) start = ts;
+          var p = Math.min((ts - start) / DURATION, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var i = 0;
+          el.textContent = template.replace(NUM, function () {
+            var v = targets[i] * eased;
+            return v.toFixed(decimals[i++]);
+          });
+          if (p < 1) window.requestAnimationFrame(tick);
+          else el.textContent = template;
+        }
+        window.requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.5 });
+    stats.forEach(function (el) { io.observe(el); });
+  }
+})();
