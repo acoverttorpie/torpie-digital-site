@@ -9,10 +9,12 @@
      Fill these in before launch. Both are safe no-ops when empty.
      ------------------------------------------------------------ */
   var CONFIG = {
-    GA4_ID: "",        // e.g. "G-XXXXXXXXXX". Leave empty until supplied.
-    FORM_ENDPOINT: ""  // POST destination for the contact form (Formspree,
-                       // Basin, a serverless function, etc.). Leave empty
-                       // until a working destination is configured.
+    GA4_ID: "G-BWB3RBKJB8",
+    FORM_ENDPOINT: ""  // GoHighLevel inbound webhook URL. In GHL:
+                       // Automation > Create Workflow > trigger
+                       // "Inbound Webhook", then paste the generated
+                       // URL here. Payload keys: name, business, phone,
+                       // email, need, about, source_page.
   };
 
   /* ---------- Google Analytics 4 (guarded) ---------- */
@@ -182,7 +184,7 @@
       if (!CONFIG.FORM_ENDPOINT) {
         showNotice(
           "This form is not connected to a destination yet. " +
-          "Set FORM_ENDPOINT in assets/js/main.js before launch. " +
+          "Paste your GoHighLevel inbound webhook URL into FORM_ENDPOINT in assets/js/main.js. " +
           "Until then, reach us directly by email or phone below.",
           true
         );
@@ -191,13 +193,18 @@
 
       submitting = true;
       submitBtn.disabled = true;
+      submitBtn.classList.add("is-loading");
       var data = new FormData(form);
       data.delete("company_website");
+      var payload = {};
+      data.forEach(function (value, key) { payload[key] = value; });
+      payload.source_page = window.location.pathname;
+      payload.submitted_at = new Date().toISOString();
 
       fetch(CONFIG.FORM_ENDPOINT, {
         method: "POST",
-        body: data,
-        headers: { "Accept": "application/json" }
+        body: JSON.stringify(payload),
+        headers: { "Accept": "application/json", "Content-Type": "application/json" }
       }).then(function (res) {
         if (!res.ok) throw new Error("Request failed");
         var name = (data.get("name") || "").toString().trim().split(" ")[0] || "there";
@@ -219,6 +226,7 @@
       }).finally(function () {
         submitting = false;
         submitBtn.disabled = false;
+        submitBtn.classList.remove("is-loading");
       });
     });
   }
@@ -369,5 +377,81 @@
       });
     }, { threshold: 0.5 });
     stats.forEach(function (el) { io.observe(el); });
+  }
+})();
+
+/* ============================================================
+   FANCY PASS 2 — chrome choreography
+   ============================================================ */
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Header shrinks + deepens after scroll ---------- */
+  var header = document.querySelector(".site-header");
+  if (header) {
+    var ticking = false;
+    function paintHeader() {
+      header.classList.toggle("is-scrolled", window.scrollY > 12);
+      ticking = false;
+    }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { window.requestAnimationFrame(paintHeader); ticking = true; }
+    }, { passive: true });
+    paintHeader();
+  }
+
+  /* ---------- Timeline connector draws in ---------- */
+  var timelines = document.querySelectorAll(".timeline");
+  if (timelines.length && !reduce && "IntersectionObserver" in window) {
+    var tio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-inview");
+          tio.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    timelines.forEach(function (el) { tio.observe(el); });
+  } else {
+    timelines.forEach(function (el) { el.classList.add("is-inview"); });
+  }
+
+  /* ---------- FAQ: animated open/close ---------- */
+  if (!reduce) {
+    document.querySelectorAll(".faq details").forEach(function (details) {
+      var summary = details.querySelector("summary");
+      var body = details.querySelector(".faq__answer");
+      if (!summary || !body) return;
+      summary.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (details.classList.contains("is-animating")) return;
+        details.classList.add("is-animating");
+        if (details.open) {
+          body.style.height = body.scrollHeight + "px";
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { body.style.height = "0px"; });
+          });
+          body.addEventListener("transitionend", function done() {
+            details.open = false;
+            body.style.height = "";
+            details.classList.remove("is-animating");
+            body.removeEventListener("transitionend", done);
+          });
+        } else {
+          details.open = true;
+          var h = body.scrollHeight;
+          body.style.height = "0px";
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { body.style.height = h + "px"; });
+          });
+          body.addEventListener("transitionend", function done() {
+            body.style.height = "";
+            details.classList.remove("is-animating");
+            body.removeEventListener("transitionend", done);
+          });
+        }
+      });
+    });
   }
 })();

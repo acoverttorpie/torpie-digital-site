@@ -16,14 +16,8 @@ BODY = f"""
     </div>
     <div>
       <figure class="photo-card reveal">
-          <div class="placeholder-shot">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1E6B4F" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/>
-            </svg>
-            <span>[PHOTO: Aiden, warm natural light, working. Replace before launch.]</span>
-          </div>
-      </figure>
+          <img src="/assets/img/aiden-torpie.jpg" alt="Aiden Torpie, founder of Torpie Digital" loading="lazy" width="900" height="1125">
+        </figure>
     </div>
   </div>
 </section>
@@ -84,7 +78,7 @@ BODY = f"""
         <h2 id="contact-heading">Tell us about your business.</h2>
         <p>You\u2019ll get a straight answer within one business day. If
         we\u2019re not the right fit, we\u2019ll say so.</p>
-        <p class="mt-3">[EMAIL] &middot; [PHONE]<br>
+        <p class="mt-3"><a href="mailto:aiden@torpiedigital.com">aiden@torpiedigital.com</a> &middot; <a href="tel:+19145527299">(914) 552-7299</a><br>
         <span class="text-muted">Remote-based in New York. Serving local
         businesses everywhere.</span></p>
       </div>
@@ -103,6 +97,10 @@ BODY = f"""
         <div class="field">
           <label for="f-phone">Phone</label>
           <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required>
           <p class="field-error">Enter a phone number where we can reach you.</p>
         </div>
         <div class="field">
@@ -126,6 +124,7 @@ BODY = f"""
           <input id="f-company-website" name="company_website" type="text" tabindex="-1" autocomplete="off">
         </div>
         <button class="btn btn-primary" type="submit">Send it</button>
+        <p class="form-microcopy"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 L10 18.5 L20 6.5"/></svg>Straight answer within one business day. No spam, no pressure, no obligation.</p>
       </form>
     </div>
   </div>

@@ -59,8 +59,9 @@ BODY = f"""
       saved. Every review answered.</p>
     </div>
     <div class="hero__media">
-      {browser_frame("yourbusiness.com",
-                     "[SCREENSHOT: best live build, warm grade. Replace before launch.]")}
+      {browser_frame("frytangacafe.com", "",
+                     image="/assets/img/frytanga.jpg",
+                     alt="Frytanga Cafe website built by Torpie Digital: a warm hero with hand-folded empanadas and a full navigation")}
     </div>
   </div>
 </section>
@@ -73,7 +74,7 @@ BODY = f"""
       <p class="stat__source">(Delivered by our founder)</p>
     </div>
     <div class="stat">
-      <p class="stat__number">17.2 &rarr; 7.7</p>
+      <p class="stat__number">27.2 &rarr; 5.7</p>
       <p class="stat__label">average Google search position for a local
       caf&eacute;, over 16 months</p>
       <p class="stat__source">(Delivered by our founder)</p>

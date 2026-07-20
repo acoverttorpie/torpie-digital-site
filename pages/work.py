@@ -60,16 +60,17 @@ BODY = f"""
         time.</p>
         <div class="case__results">
           <h3>The results, over 16 months</h3>
-          <p>2,160 total clicks and 223,000 search impressions &middot;
+          <p>3,160 total clicks and 223,000 search impressions &middot;
           quarterly clicks up from 197 to 435 &middot; average search position
-          improved from 17.2 to 7.7.</p>
+          improved from 27.2 to 5.7.</p>
         </div>
         <p class="text-muted">This is what \u201csearch-ready, then grown over
         time\u201d actually looks like. It isn\u2019t fast. It compounds.</p>
       </div>
       <div class="case__media">
-        {browser_frame("localcafe.com",
-                       "[SCREENSHOT: caf\u00e9 site. Replace before launch.]")}
+        {browser_frame("frytangacafe.com", "",
+                       image="/assets/img/frytanga.jpg",
+                       alt="Frytanga Cafe website: Colombian cafe hero section with menu navigation and call button")}
       </div>
     </article>
 
@@ -100,6 +101,39 @@ BODY = f"""
       </div>
     </article>
 
+  </div>
+</section>
+
+
+<section class="section section--white" aria-labelledby="builds-heading">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      {eyebrow("Recent builds", center=True)}
+      <h2 id="builds-heading">Live sites, built by Torpie Digital.</h2>
+    </div>
+    <div class="grid grid-3 build-gallery">
+      <a class="build-tile reveal" href="https://frytangacafe.com" target="_blank" rel="noopener">
+        {browser_frame("frytangacafe.com", "",
+                       image="/assets/img/frytanga.jpg",
+                       alt="Frytanga Cafe website hero with hand-folded empanadas")}
+        <h3>Frytanga Caf&eacute;</h3>
+        <p class="text-muted small">Colombian caf&eacute; &middot; Ossining, NY</p>
+      </a>
+      <a class="build-tile reveal" href="https://lucazpainting.com" target="_blank" rel="noopener">
+        {browser_frame("lucazpainting.com", "",
+                       image="/assets/img/lucaz.jpg",
+                       alt="Lucaz Painting and Carpentry website hero with booking buttons and Google reviews")}
+        <h3>Lucaz Painting &amp; Carpentry</h3>
+        <p class="text-muted small">Painting &amp; carpentry &middot; Westchester County, NY</p>
+      </a>
+      <a class="build-tile reveal" href="https://deluxeautospa.co" target="_blank" rel="noopener">
+        {browser_frame("deluxeautospa.co", "",
+                       image="/assets/img/deluxe.jpg",
+                       alt="Deluxe Auto Spa website hero for mobile car detailing with booking button")}
+        <h3>Deluxe Auto Spa</h3>
+        <p class="text-muted small">Mobile detailing &middot; Croton, NY</p>
+      </a>
+    </div>
   </div>
 </section>
 

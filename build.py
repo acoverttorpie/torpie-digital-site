@@ -30,11 +30,27 @@ NAV_ITEMS = [
     ("About", "/about/"),
 ]
 
-LOGO_MARK = (
-    '<svg class="logo__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">'
-    '<rect x="2" y="2" width="36" height="36" rx="9" fill="#1E6B4F"/>'
-    '<path d="M11 21.5 L17 27.5 L29 13.5" fill="none" stroke="#FAF8F4" '
-    'stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+def _open_shop_mark(stroke, extra_class=""):
+    cls = "logo__mark" + ((" " + extra_class) if extra_class else "")
+    return (
+        f'<svg class="{cls}" viewBox="0 0 40 40" aria-hidden="true" focusable="false">'
+        f'<path class="mark-frame" d="M30 5 H11 a6 6 0 0 0 -6 6 v18 a6 6 0 0 0 6 6 h18 '
+        f'a6 6 0 0 0 6 -6 V16" fill="none" stroke="{stroke}" stroke-width="4.6" '
+        'stroke-linecap="round"/>'
+        f'<path class="mark-check" d="M13 21 L19 27 L34 8" fill="none" stroke="{stroke}" '
+        'stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    )
+
+
+LOGO_MARK = _open_shop_mark("#1E6B4F")
+LOGO_MARK_DARK = _open_shop_mark("#8FD3B6")
+
+CONTACT_EMAIL = "aiden@torpiedigital.com"
+CONTACT_PHONE_DISPLAY = "(914) 552-7299"
+CONTACT_PHONE_TEL = "+19145527299"
+CONTACT_LINKS = (
+    f'<a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> &middot; '
+    f'<a href="tel:{CONTACT_PHONE_TEL}">{CONTACT_PHONE_DISPLAY}</a>'
 )
 
 CHECK_CHIP = (
@@ -136,6 +152,9 @@ def head(title, description, path, extra_schema=""):
                        "and takes care of them after launch: hosting, updates, "
                        "reviews, and Google presence.",
         "founder": {"@type": "Person", "name": "Aiden Torpie"},
+        "telephone": "+1-914-552-7299",
+        "email": "aiden@torpiedigital.com",
+        "sameAs": ["https://www.instagram.com/torpiedigital"],
         "areaServed": "United States",
         "address": {"@type": "PostalAddress", "addressRegion": "NY",
                     "addressCountry": "US"},
@@ -201,11 +220,12 @@ def header(active_path):
 
 FOOTER = f"""</main>
 <footer class="site-footer">
+  <div class="footer-ghost" aria-hidden="true">torpie digital</div>
   <div class="container">
     <div class="footer-grid">
       <div>
         <a class="logo" href="/" aria-label="Torpie Digital home">
-          {LOGO_MARK}
+          {LOGO_MARK_DARK}
           <span class="logo__wordmark">torpie digital</span>
         </a>
         <p class="footer-tagline">Websites that work for a living.</p>
@@ -218,7 +238,8 @@ FOOTER = f"""</main>
         <a href="/about/">About</a>
       </nav>
       <div class="flow">
-        <p>[EMAIL] &middot; [PHONE]</p>
+        <p>{CONTACT_LINKS}</p>
+        <p><a href="https://www.instagram.com/torpiedigital" target="_blank" rel="noopener">Instagram: @torpiedigital</a></p>
         <p>Remote-based in New York. Serving local businesses everywhere.</p>
       </div>
     </div>
